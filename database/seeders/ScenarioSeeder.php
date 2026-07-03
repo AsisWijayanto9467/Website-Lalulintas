@@ -1,0 +1,261 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class ScenarioSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $scenarios = [
+            [
+                'kategori' => 'etika',
+                'gambar' => 'https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293533/traffic_light_singapore_aesthetic_lololol_enboev.jpg',
+                'situasi' => 'Lampu lalu lintas baru saja berubah hijau, tetapi masih ada pejalan kaki yang belum selesai menyeberang di zebra cross.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Tekan klakson keras agar pejalan kaki menyingkir'],
+                    ['id' => 'B', 'teks' => 'Tunggu hingga pejalan kaki selesai menyeberang dengan aman'],
+                    ['id' => 'C', 'teks' => 'Maju pelan-pelan sambil memberikan ruang'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Pejalan kaki yang sedang menyeberang di zebra cross memiliki hak prioritas penuh. Pengemudi wajib menunggu hingga mereka aman. Ini diatur dalam Pasal 106 ayat (2) UU No. 22 Tahun 2009.',
+                'pasal' => 'Pasal 106 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'regulasi',
+                'gambar' => 'https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293718/121808364918797788_lton4a.jpg',
+                'situasi' => 'Anda sedang berkendara di jalan dua arah. Kendaraan di depan Anda melaju lambat, dan marka jalan di tengah adalah garis putih putus-putus.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Boleh menyalip jika dari arah berlawanan aman'],
+                    ['id' => 'B', 'teks' => 'Dilarang menyalip karena jalan dua arah'],
+                    ['id' => 'C', 'teks' => 'Menyalip dari sebelah kiri karena aman'],
+                ]),
+                'jawaban' => 'A',
+                'penjelasan' => 'Garis putih putus-putus menandakan pengemudi diperbolehkan melintasi marka tersebut untuk berpindah lajur atau menyalip jika situasi lalu lintas aman.',
+                'pasal' => 'Permenhub Marka Jalan',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'distraksi',
+                'gambar' => 'https://res.cloudinary.com/dtjbvmrow/image/upload/v1782293834/Teaching_Teens_About_Distracted_Driving_in_the_Smartphone_Age_sjytv5.jpg',
+                'situasi' => 'Handphone Anda berbunyi keras dan ada pesan masuk yang sangat penting saat Anda mengendarai sepeda motor.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Baca pesan sekilas sambil terus melaju'],
+                    ['id' => 'B', 'teks' => 'Menepi di tempat aman, berhenti, lalu buka HP'],
+                    ['id' => 'C', 'teks' => 'Minta teman yang dibonceng memegang kemudi sebentar'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Menggunakan handphone saat berkendara sangat berbahaya dan melanggar hukum karena mengganggu konsentrasi. Pasal 283 UU 22/2009 melarang hal ini.',
+                'pasal' => 'Pasal 283 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'prioritas',
+                'gambar' => 'https://res.cloudinary.com/dtjbvmrow/image/upload/v1782294132/ChatGPT_Image_24_Jun_2026_16.41.44_v77v6x.png',
+                'situasi' => 'Anda tiba di persimpangan empat jalan yang tidak memiliki lampu lalu lintas. Pada saat bersamaan, ada kendaraan lain di sebelah kiri Anda.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Kendaraan yang datang dari cabang persimpangan sebelah kiri mendapat prioritas'],
+                    ['id' => 'B', 'teks' => 'Kendaraan Anda (di sebelah kanan) mendapat prioritas'],
+                    ['id' => 'C', 'teks' => 'Siapa yang paling cepat maju, dia yang prioritas'],
+                ]),
+                'jawaban' => 'A',
+                'penjelasan' => 'Pada persimpangan sebidang tak bersinyal, pengemudi wajib mendahulukan kendaraan yang datang dari cabang persimpangan sebelah kiri.',
+                'pasal' => 'Pasal 113 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'keselamatan',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Helm+SNI',
+                'situasi' => 'Jarak sekolah hanya 200 meter dari rumah. Anda hendak ke sekolah naik motor.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Tidak perlu pakai helm karena sangat dekat'],
+                    ['id' => 'B', 'teks' => 'Tetap memakai helm standar SNI dengan diklik'],
+                    ['id' => 'C', 'teks' => 'Bawa helm tapi tidak usah dipakai, taruh di setang'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Kecelakaan bisa terjadi di mana saja, tanpa memandang jarak. Helm SNI wajib digunakan dengan benar (sampai bunyi klik) setiap saat berkendara sepeda motor.',
+                'pasal' => 'Pasal 106 ayat 8 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'regulasi',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Parkir+Dekat+Hidran',
+                'situasi' => 'Anda sedang mencari tempat parkir di area yang padat dan melihat ruang kosong tepat di depan hidran pemadam kebakaran.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Parkir di situ sebentar saja, menyalakan lampu hazard'],
+                    ['id' => 'B', 'teks' => 'Boleh parkir asal tidak mengunci setang'],
+                    ['id' => 'C', 'teks' => 'Cari tempat lain, dilarang parkir di depan hidran'],
+                ]),
+                'jawaban' => 'C',
+                'penjelasan' => 'Dilarang keras memarkir kendaraan di tempat yang dapat menutupi akses keadaan darurat seperti hidran pemadam kebakaran.',
+                'pasal' => 'Pasal 287 ayat 3 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'keselamatan',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Berkendara+Saat+Hujan',
+                'situasi' => 'Cuaca tiba-tiba hujan deras. Jalanan menjadi sangat licin dan jarak pandang berkurang.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Kurangi kecepatan, nyalakan lampu utama, dan jaga jarak aman'],
+                    ['id' => 'B', 'teks' => 'Nyalakan lampu hazard agar terlihat jelas sambil jalan terus'],
+                    ['id' => 'C', 'teks' => 'Pacu kendaraan lebih cepat agar lekas sampai berteduh'],
+                ]),
+                'jawaban' => 'A',
+                'penjelasan' => 'Lampu hazard HANYA untuk kendaraan berhenti dalam kondisi darurat. Saat hujan, kurangi kecepatan dan nyalakan lampu utama (headlamp) biasa.',
+                'pasal' => 'Keselamatan Dasar Berkendara',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'kewajiban kendaraan',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Lampu+Rem+Mati',
+                'situasi' => 'Anda menyadari lampu rem belakang motor Anda putus/mati saat malam hari.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Tidak masalah, yang penting lampu depan menyala'],
+                    ['id' => 'B', 'teks' => 'Segera perbaiki sebelum berkendara karena berbahaya bagi pengendara di belakang'],
+                    ['id' => 'C', 'teks' => 'Berkendara sambil terus memencet klakson agar orang tahu'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Lampu rem berfungsi memberi tanda pada kendaraan di belakang bahwa kita mengurangi kecepatan. Jika mati, risiko tertabrak dari belakang sangat besar.',
+                'pasal' => 'Pasal 285 ayat 1 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'jarak aman',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Jarak+Aman',
+                'situasi' => 'Kendaraan di depan Anda mendadak mengerem keras.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Banting setir ke kiri sekuat tenaga'],
+                    ['id' => 'B', 'teks' => 'Rem mendadak dan berharap tidak menabrak'],
+                    ['id' => 'C', 'teks' => 'Jika menjaga jarak aman, Anda bisa mengerem secara bertahap tanpa menabrak'],
+                ]),
+                'jawaban' => 'C',
+                'penjelasan' => 'Menjaga jarak aman sangat krusial. Rumus umum adalah \'Aturan 3 Detik\' dengan kendaraan di depan untuk memberikan ruang reaksi jika ada pengereman mendadak.',
+                'pasal' => 'Pasal 62 PP 43/1993',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'tanda belok',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Memberi+Lampu+Sein',
+                'situasi' => 'Anda hendak berbelok ke kanan di persimpangan yang jaraknya tinggal 10 meter.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Nyalakan sein kanan lalu langsung potong jalan'],
+                    ['id' => 'B', 'teks' => 'Sudah terlambat, lebih baik lurus saja daripada belok mendadak'],
+                    ['id' => 'C', 'teks' => 'Nyalakan sein kiri untuk mengecoh pengendara lain'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Lampu isyarat berbelok (sein) harus dinyalakan minimal 30 meter sebelum berbelok. Berbelok mendadak sangat membahayakan diri sendiri dan orang lain.',
+                'pasal' => 'Pasal 112 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'regulasi',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Melewati+Trotoar',
+                'situasi' => 'Jalanan sangat macet, tapi trotoar di sebelah kiri kosong dari pejalan kaki.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Naik ke trotoar perlahan agar tidak mengganggu'],
+                    ['id' => 'B', 'teks' => 'Tetap antre di jalan raya sesuai lajur'],
+                    ['id' => 'C', 'teks' => 'Naik trotoar tapi klakson terus agar aman'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Trotoar adalah hak pejalan kaki. Berkendara di trotoar dilarang dalam kondisi apapun karena dapat merampas hak pejalan kaki.',
+                'pasal' => 'Pasal 131 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'legalitas',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Belum+Memiliki+SIM',
+                'situasi' => 'Teman Anda minta diantar ke pasar, padahal Anda baru usia 16 tahun dan belum memiliki SIM C.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Antar saja karena lewat jalan kampung'],
+                    ['id' => 'B', 'teks' => 'Tolak dengan halus karena Anda belum punya SIM'],
+                    ['id' => 'C', 'teks' => 'Pinjam SIM kakak untuk berjaga-jaga'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Setiap orang yang mengemudikan kendaraan bermotor di jalan wajib memiliki Surat Izin Mengemudi sesuai jenis kendaraannya.',
+                'pasal' => 'Pasal 281 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'adaptasi',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Menghindari+Jalan+Berlubang',
+                'situasi' => 'Anda sedang melaju dan melihat lubang besar di tengah lajur Anda.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Segera banting setir ke kanan tanpa melihat spion'],
+                    ['id' => 'B', 'teks' => 'Kurangi kecepatan, cek spion, jika aman hindari lubang perlahan'],
+                    ['id' => 'C', 'teks' => 'Tutup mata dan terjang lubangnya'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Menghindari rintangan harus dengan kesadaran lingkungan (situational awareness). Cek spion wajib sebelum mengubah lajur agar tidak terserempet dari belakang.',
+                'pasal' => 'Keselamatan Dasar Berkendara',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'prioritas darurat',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Mendengar+Sirene+Ambulans',
+                'situasi' => 'Terdengar sirene Ambulans meraung dari arah belakang Anda saat jalanan sedang padat.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Menepi ke kiri dan memberikan jalan sebisa mungkin'],
+                    ['id' => 'B', 'teks' => 'Buntuti ambulans agar ikut bebas macet'],
+                    ['id' => 'C', 'teks' => 'Diam di lajur karena sedang macet, tidak bisa ke mana-mana'],
+                ]),
+                'jawaban' => 'A',
+                'penjelasan' => 'Ambulans yang sedang mengangkut orang sakit/korban memiliki hak utama pengguna jalan yang mendapat prioritas lebih tinggi dari pengguna jalan lain.',
+                'pasal' => 'Pasal 134 UU 22/2009',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kategori' => 'etika',
+                'gambar' => 'https://placehold.co/600x400/1A3A6B/FFFFFF/png?text=Jalan+Sempit',
+                'situasi' => 'Anda berpapasan dengan mobil lain di jalan sempit. Di sisi Anda ada ruang untuk menepi sejenak.',
+                'pilihan' => json_encode([
+                    ['id' => 'A', 'teks' => 'Tetap maju di tengah, biar mobil lain yang mundur'],
+                    ['id' => 'B', 'teks' => 'Mengalah, menepi, dan memberikan isyarat agar mobil lain lewat'],
+                    ['id' => 'C', 'teks' => 'Nyalakan lampu jauh terus menerus'],
+                ]),
+                'jawaban' => 'B',
+                'penjelasan' => 'Etika lalu lintas mewajibkan kita untuk saling mengalah dan menghormati pengguna jalan lain. Jika ada ruang di sisi kita, berinisiatiflah memberi jalan.',
+                'pasal' => 'Etika Transportasi',
+                'poin' => 10,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        DB::table('scenarios')->insert($scenarios);
+    }
+}
