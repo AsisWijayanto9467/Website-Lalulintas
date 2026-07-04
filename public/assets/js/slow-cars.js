@@ -29,7 +29,7 @@ const SlowCars = (function() {
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.12);
-            } 
+            }
             else if (type === 'score') {
                 // Suara mobil lolos dengan selamat (Harmoni ceria)
                 osc.type = 'triangle';
@@ -40,7 +40,7 @@ const SlowCars = (function() {
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.3);
-            } 
+            }
             else if (type === 'crash') {
                 // Suara tabrakan gemuruh dramatis
                 osc.type = 'sawtooth';
@@ -48,7 +48,7 @@ const SlowCars = (function() {
                 osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.8);
                 gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
-                
+
                 // Tambahkan distorsi sedikit via modulator kedua
                 const subOsc = audioCtx.createOscillator();
                 const subGain = audioCtx.createGain();
@@ -57,10 +57,10 @@ const SlowCars = (function() {
                 subOsc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.6);
                 subGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 subGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-                
+
                 subOsc.connect(subGain);
                 subGain.connect(audioCtx.destination);
-                
+
                 osc.start();
                 subOsc.start();
                 osc.stop(audioCtx.currentTime + 0.8);
@@ -191,23 +191,23 @@ const SlowCars = (function() {
                 this.path = path;
                 this.x = path.startX;
                 this.y = path.startY;
-                
+
                 // Dimensi mobil (panjang 52px, lebar 28px)
                 this.width = 52;
                 this.height = 28;
-                
+
                 // Rotasi berdasarkan arah jalur
                 this.angle = path.angle;
-                
+
                 // Mode awal mobil adalah NORMAL
-                this.speedMode = 'NORMAL'; 
+                this.speedMode = 'NORMAL';
                 this.currentSpeed = SPEED_MODES.NORMAL;
                 this.targetSpeed = SPEED_MODES.NORMAL;
-                
+
                 // Visual mobil
                 this.color = CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)];
                 this.id = Math.random().toString(36).substring(2, 9);
-                
+
                 // Penanda apakah sudah dihitung skornya saat keluar area
                 this.escaped = false;
 
@@ -235,12 +235,12 @@ const SlowCars = (function() {
 
                 // Cek apakah mobil sudah berhasil melewati persimpangan dan keluar layar
                 if (!this.escaped) {
-                    const isOutside = 
+                    const isOutside =
                         (this.path.dirX === 1 && this.x > canvas.width + 40) ||
                         (this.path.dirX === -1 && this.x < -40) ||
                         (this.path.dirY === 1 && this.y > canvas.height + 40) ||
                         (this.path.dirY === -1 && this.y < -40);
-                    
+
                     if (isOutside) {
                         this.escaped = true;
                         handleScore();
@@ -250,9 +250,9 @@ const SlowCars = (function() {
                 // Tambahkan efek partikel tipis jika melaju sangat CEPAT
                 if (this.speedMode === 'FAST' && Math.random() < 0.25) {
                     particles.push(new Particle(
-                        this.x - this.path.dirX * 20, 
-                        this.y - this.path.dirY * 20, 
-                        '#fbbf24', 
+                        this.x - this.path.dirX * 20,
+                        this.y - this.path.dirY * 20,
+                        '#fbbf24',
                         1.5
                     ));
                 }
@@ -311,7 +311,7 @@ const SlowCars = (function() {
                 ctx.fillStyle = this.speedMode === 'STOPPED' ? '#ff0000' : '#b91c1c'; // Menyala merah menyala jika sedang rem/berhenti
                 ctx.fillRect(-this.width / 2, -this.height / 3 - 1, 2, 3);
                 ctx.fillRect(-this.width / 2, this.height / 3 - 2, 2, 3);
-                
+
                 // Tambahkan pancaran sinar rem jika sedang BERHENTI
                 if (this.speedMode === 'STOPPED') {
                     ctx.save();
@@ -330,7 +330,7 @@ const SlowCars = (function() {
                 if (this.speedMode !== 'NORMAL') {
                     ctx.save();
                     ctx.translate(this.x, this.y - 28);
-                    
+
                     if (this.speedMode === 'STOPPED') {
                         // Gambar Lingkaran Stop Merah
                         ctx.fillStyle = '#ef4444';
@@ -363,7 +363,7 @@ const SlowCars = (function() {
                 const isVertical = this.angle === Math.PI / 2 || this.angle === -Math.PI / 2;
                 const halfW = (isVertical ? this.height : this.width) / 2;
                 const halfH = (isVertical ? this.width : this.height) / 2;
-                
+
                 // Mengecilkan hit-box sedikit saja demi kelonggaran permainan yang seru
                 return {
                     minX: this.x - halfW + 3,
@@ -378,10 +378,10 @@ const SlowCars = (function() {
                 const isVertical = this.angle === Math.PI / 2 || this.angle === -Math.PI / 2;
                 const w = isVertical ? this.height : this.width;
                 const h = isVertical ? this.width : this.height;
-                
+
                 // Memberikan sedikit batas ekstra agar lebih mudah diklik di HP/Layar Sentuh
                 const clickBuffer = 12;
-                
+
                 return px >= this.x - w/2 - clickBuffer &&
                        px <= this.x + w/2 + clickBuffer &&
                        py >= this.y - h/2 - clickBuffer &&
@@ -408,12 +408,12 @@ const SlowCars = (function() {
                 this.y = y;
                 this.color = color;
                 this.radius = Math.random() * 4 + 2;
-                
+
                 const angle = Math.random() * Math.PI * 2;
                 const speed = (Math.random() * 4 + 1) * speedScale;
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-                
+
                 this.alpha = 1;
                 this.decay = Math.random() * 0.03 + 0.015;
             }
@@ -438,7 +438,7 @@ const SlowCars = (function() {
         // --- DEKORASI LANSKAP PERSIMPANGAN ---
         function drawMap() {
             // 1. Latar Belakang Taman Hijau Segar
-            ctx.fillStyle = '#4f772d'; 
+            ctx.fillStyle = '#4f772d';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const mapX = (x) => (x > 400 ? x + (canvas.width - 800) : x);
@@ -566,7 +566,7 @@ const SlowCars = (function() {
         function drawTunnel(x, y, w, h, dir) {
             ctx.fillStyle = '#1e293b'; // Bagian dalam terowongan gelap gulita
             ctx.fillRect(x, y, w, h);
-            
+
             ctx.fillStyle = '#64748b'; // Struktur gerbang beton abu-abu kokoh
             if (dir === 'R') {
                 ctx.fillRect(x + w - 8, y, 8, h);
@@ -610,7 +610,7 @@ const SlowCars = (function() {
         function spawnCar() {
             // Pilih jalur acak berdasarkan bobot
             const availablePaths = [...PATHS];
-            
+
             // Filter agar mobil tidak muncul bertumpuk langsung di titik spawn yang sama
             const safePaths = availablePaths.filter(path => {
                 return !cars.some(car => {
@@ -631,7 +631,7 @@ const SlowCars = (function() {
         function checkCollisions() {
             for (let i = 0; i < cars.length; i++) {
                 const boundsA = cars[i].getBounds();
-                
+
                 for (let j = i + 1; j < cars.length; j++) {
                     const boundsB = cars[j].getBounds();
 
@@ -655,7 +655,7 @@ const SlowCars = (function() {
         function triggerCrash(car1, car2) {
             gameActive = false;
             playSound('crash');
-            
+
             // Guncangan layar dramatis
             screenShake = 22;
 
@@ -668,8 +668,8 @@ const SlowCars = (function() {
             for (let k = 0; k < 60; k++) {
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 particles.push(new Particle(
-                    crashX + (Math.random() * 20 - 10), 
-                    crashY + (Math.random() * 20 - 10), 
+                    crashX + (Math.random() * 20 - 10),
+                    crashY + (Math.random() * 20 - 10),
                     color,
                     2.5
                 ));
@@ -742,9 +742,9 @@ const SlowCars = (function() {
 
                 // Bersihkan mobil yang sudah jauh meninggalkan layar
                 if (car.escaped && (
-                    car.x > canvas.width + 100 || 
-                    car.x < -100 || 
-                    car.y > canvas.height + 100 || 
+                    car.x > canvas.width + 100 ||
+                    car.x < -100 ||
+                    car.y > canvas.height + 100 ||
                     car.y < -100
                 )) {
                     cars.splice(i, 1);
@@ -811,15 +811,15 @@ const SlowCars = (function() {
             spawnInterval = 1800;
             difficultyMultiplier = 1.0;
             scoreDisplay.textContent = '0';
-            
+
             startMenu.classList.add('hidden');
             gameOverScreen.classList.add('hidden');
             pauseScreen.classList.add('hidden');
-            
+
             isPaused = false;
             gameActive = true;
             lastTime = 0;
-            
+
             // Spawn mobil pertama secara instan
             spawnCar();
         }
@@ -860,15 +860,15 @@ const SlowCars = (function() {
         function recalculateLayout() {
             CENTER_X = canvas.width / 2;
             CENTER_Y = canvas.height / 2;
-            
+
             // Update PATHS values
             PATHS[0].startY = CENTER_Y + 28;
-            
+
             PATHS[1].startX = canvas.width + 60;
             PATHS[1].startY = CENTER_Y - 28;
-            
+
             PATHS[2].startX = CENTER_X + 28;
-            
+
             PATHS[3].startX = CENTER_X - 28;
             PATHS[3].startY = canvas.height + 60;
         }
@@ -878,18 +878,18 @@ const SlowCars = (function() {
             const container = canvas.parentElement;
             if (!container) return;
             const rect = container.getBoundingClientRect();
-            
+
             const oldCenterX = CENTER_X;
             const oldCenterY = CENTER_Y;
-            
+
             canvas.width = rect.width || 800;
             canvas.height = rect.height || 600;
-            
+
             recalculateLayout();
-            
+
             const dx = CENTER_X - oldCenterX;
             const dy = CENTER_Y - oldCenterY;
-            
+
             if (gameActive) {
                 cars.forEach(car => {
                     if (car.path.id === 'L2R' || car.path.id === 'R2L') {
@@ -911,8 +911,8 @@ const SlowCars = (function() {
         // Jalankan game loop pertama kali untuk menggambar peta background
         requestAnimationFrame(gameLoop);
         lucide.createIcons(); // Tampilkan ikon Lucide pertama kali
-    
-    
+
+
     // API
     return {
         init: () => {
@@ -920,10 +920,10 @@ const SlowCars = (function() {
             gameOverScreen.classList.add('hidden');
             pauseScreen.classList.add('hidden');
             highscoreDisplay.textContent = highScore;
-            
+
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-            
+
             if(!lastTime) requestAnimationFrame(gameLoop);
         },
         quit: () => {
