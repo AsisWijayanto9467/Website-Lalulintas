@@ -26,9 +26,7 @@
         window.API_BASE = '{{ url('/api/v1') }}';
     </script>
 </head>
-
 <body>
-
     <!-- LOADING SCREEN -->
     <div id="loading-screen" class="screen active">
         <div class="loader">
@@ -184,9 +182,7 @@
                     </div>
                 </button>
             </div>
-
         </main>
-
     </div>
 
     <!-- Bottom Navigation (Global - outside any screen) -->
@@ -431,7 +427,7 @@
             <div class="uu-list" id="ui-uu-list"></div>
         </div>
     </div>
-
+    
     <!-- PUZZLE SCREEN (Traffic Tap Puzzle) -->
     <div id="puzzle-screen" class="screen">
         <div

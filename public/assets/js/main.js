@@ -238,10 +238,221 @@ const app = (function () {
         }
     }
 
+    // ===== MODIFIED QUIT GAME WITH CONFIRMATION =====
     function quitGame() {
+        // Cek apakah sedang dalam mode quiz (skenario, kuis, tebak_rambu)
+        const quizModes = ['skenario', 'kuis', 'tebak_rambu'];
+        const isQuizMode = quizModes.includes(state.currentMode);
+
+        if (isQuizMode && state.scenarioIndex < currentGameData.length) {
+            // Tampilkan popup konfirmasi pertama: Yakin mau keluar?
+            showExitConfirmation();
+        } else {
+            // Langsung keluar untuk game canvas atau quiz yang sudah selesai
+            performQuitGame(false);
+        }
+    }
+
+    // ===== SHOW EXIT CONFIRMATION POPUP =====
+    function showExitConfirmation() {
+        // Hentikan timer sementara
+        clearInterval(state.timerInterval);
+
+        const progressInfo = `Progress: ${state.scenarioIndex + 1}/${currentGameData.length} soal (${state.correctCount} benar, ⭐ ${state.sessionScore} poin)`;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.id = 'exit-confirm-overlay';
+
+        overlay.innerHTML = `
+            <div class="confirm-card">
+                <div class="confirm-icon warning">⚠️</div>
+                <h2 class="confirm-title">Yakin Mau Keluar?</h2>
+                <p class="confirm-message">
+                    Kamu sedang mengerjakan <strong>${getModeName(state.currentMode)}</strong>.
+                    Progress pengerjaanmu akan hilang jika tidak disimpan.
+                </p>
+                <div class="confirm-progress-info">
+                    ${progressInfo}
+                </div>
+                <div class="confirm-actions">
+                    <button class="confirm-btn confirm-btn-secondary" id="btn-cancel-exit">
+                        ❌ Lanjutkan
+                    </button>
+                    <button class="confirm-btn confirm-btn-primary" id="btn-confirm-exit">
+                        🚪 Keluar & Simpan
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Event listeners
+        document.getElementById('btn-cancel-exit').onclick = () => {
+            document.body.removeChild(overlay);
+            // Lanjutkan timer jika mode tebak_rambu
+            if (state.currentMode === 'tebak_rambu') {
+                startTimer();
+            }
+        };
+
+        document.getElementById('btn-confirm-exit').onclick = () => {
+            // Tampilkan popup kedua: Simpan progress?
+            document.body.removeChild(overlay);
+            showSaveProgressConfirmation();
+        };
+    }
+
+    // ===== SHOW SAVE PROGRESS CONFIRMATION =====
+    function showSaveProgressConfirmation() {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.id = 'save-progress-overlay';
+
+        const modeName = getModeName(state.currentMode);
+
+        overlay.innerHTML = `
+            <div class="confirm-card">
+                <div class="confirm-icon">💾</div>
+                <h2 class="confirm-title">Simpan Progress?</h2>
+                <p class="confirm-message">
+                    Kamu sudah mengerjakan <strong>${state.scenarioIndex + 1} dari ${currentGameData.length}</strong> soal
+                    di mode <strong>${modeName}</strong>.
+                </p>
+                <div class="confirm-progress-info">
+                    📊 Skor sementara: <strong>⭐ ${state.sessionScore}</strong><br>
+                    ✅ Jawaban benar: <strong>${state.correctCount}</strong><br>
+                    🔥 Combo: <strong>${state.combo}x</strong>
+                </div>
+                <div class="confirm-actions">
+                    <button class="confirm-btn confirm-btn-secondary" id="btn-no-save">
+                        🗑️ Jangan Simpan
+                    </button>
+                    <button class="confirm-btn confirm-btn-success" id="btn-yes-save">
+                        💾 Simpan Progress
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        document.getElementById('btn-no-save').onclick = () => {
+            document.body.removeChild(overlay);
+            performQuitGame(false);
+        };
+
+        document.getElementById('btn-yes-save').onclick = () => {
+            document.body.removeChild(overlay);
+            saveGameProgress();
+            performQuitGame(true);
+        };
+    }
+
+    // ===== SAVE GAME PROGRESS =====
+    function saveGameProgress() {
+        const progressData = {
+            mode: state.currentMode,
+            scenarioIndex: state.scenarioIndex,
+            sessionScore: state.sessionScore,
+            correctCount: state.correctCount,
+            combo: state.combo,
+            totalQuestions: currentGameData.length,
+            gameData: currentGameData, // Simpan data soal
+            timestamp: Date.now()
+        };
+
+        localStorage.setItem('lajuaman_game_progress', JSON.stringify(progressData));
+        console.log('Progress saved:', progressData);
+    }
+
+    // ===== LOAD GAME PROGRESS =====
+    function loadGameProgress() {
+        const saved = localStorage.getItem('lajuaman_game_progress');
+        if (!saved) return null;
+
+        try {
+            const progressData = JSON.parse(saved);
+
+            // Cek apakah progress masih valid (kurang dari 24 jam)
+            const hoursPassed = (Date.now() - progressData.timestamp) / (1000 * 60 * 60);
+            if (hoursPassed > 24) {
+                localStorage.removeItem('lajuaman_game_progress');
+                return null;
+            }
+
+            return progressData;
+        } catch (e) {
+            localStorage.removeItem('lajuaman_game_progress');
+            return null;
+        }
+    }
+
+    // ===== CHECK FOR SAVED PROGRESS =====
+    function checkSavedProgress() {
+        const progress = loadGameProgress();
+        if (!progress || progress.scenarioIndex >= progress.totalQuestions) return false;
+
+        return progress;
+    }
+
+    // ===== RESUME GAME FROM SAVED PROGRESS =====
+    async function resumeGame() {
+        const progress = loadGameProgress();
+        if (!progress) return false;
+
+        state.currentMode = progress.mode;
+        state.scenarioIndex = progress.scenarioIndex;
+        state.sessionScore = progress.sessionScore;
+        state.correctCount = progress.correctCount;
+        state.combo = progress.combo;
+        currentGameData = progress.gameData;
+
+        document.getElementById("ui-score").textContent = `⭐ ${state.sessionScore}`;
+
+        if (state.combo >= 2) {
+            const ce = document.getElementById("ui-combo");
+            ce.textContent = `🔥 ${state.combo}x`;
+            ce.classList.remove("hidden");
+            ce.style.display = "inline-flex";
+        }
+
+        document.getElementById("ui-timer").style.display =
+            state.currentMode === "tebak_rambu" ? "inline-flex" : "none";
+
+        showScreen("game-screen");
+        loadScenario();
+
+        // Hapus progress setelah di-resume
+        localStorage.removeItem('lajuaman_game_progress');
+
+        return true;
+    }
+
+    // ===== PERFORM ACTUAL QUIT =====
+    function performQuitGame(wasSaved) {
         // Hentikan semua timer yang berjalan
         clearInterval(state.timerInterval);
         state.timerInterval = null;
+
+        // End session ke server jika ada progress yang belum disimpan
+        if (!wasSaved && state.correctCount > 0 && state.currentMode) {
+            API.endSession({
+                mode: state.currentMode,
+                session_score: state.sessionScore,
+                correct_count: state.correctCount,
+                total_questions: currentGameData.length,
+            }).then(result => {
+                if (result?.player_stats) {
+                    state.totalPoin = result.player_stats.total_poin;
+                    state.highScore = result.player_stats.high_score;
+                    state.currentLevel = result.player_stats.level;
+                    state.sessionCount = result.player_stats.session_count;
+                }
+                updateHomeStats();
+            }).catch(e => console.log('Error ending session:', e));
+        }
 
         // Reset state game
         state.currentMode = null;
@@ -276,6 +487,19 @@ const app = (function () {
         }
 
         // Reset UI game screen
+        resetGameUI();
+
+        // Kembali ke main menu
+        showScreen("main-menu");
+
+        // Update stats di home
+        updateHomeStats();
+
+        console.log("Game quit successfully", wasSaved ? "(progress saved)" : "");
+    }
+
+    // ===== RESET GAME UI =====
+    function resetGameUI() {
         const uiScore = document.getElementById("ui-score");
         if (uiScore) uiScore.textContent = "⭐ 0";
 
@@ -311,19 +535,24 @@ const app = (function () {
             scenarioImg.parentElement.style.display = "";
         }
 
-        // Reset semua tombol choice yang mungkin disabled
+        // Reset semua tombol choice
         document.querySelectorAll(".choice-btn").forEach((btn) => {
             btn.disabled = false;
             btn.classList.remove("correct", "wrong");
         });
+    }
 
-        // Kembali ke main menu
-        showScreen("main-menu");
-
-        // Update stats di home
-        updateHomeStats();
-
-        console.log("Game quit successfully");
+    // ===== GET MODE NAME HELPER =====
+    function getModeName(mode) {
+        const modeNames = {
+            'skenario': 'Simulasi Skenario',
+            'kuis': 'Kuis UU LLAJ',
+            'tebak_rambu': 'Tebak Rambu Cepat',
+            'puzzle': 'Traffic Tap Puzzle',
+            'slowcars': 'Slow Cars Puzzle',
+            'bus': 'Supir Bus Cilik'
+        };
+        return modeNames[mode] || mode;
     }
 
     function showBadgePopup(n) {
@@ -401,6 +630,66 @@ const app = (function () {
         const nameInput = document.getElementById("player-name");
         const inputName = nameInput ? nameInput.value.trim() : "";
 
+        // Cek apakah ada progress tersimpan untuk mode ini
+        const savedProgress = checkSavedProgress();
+        if (savedProgress && savedProgress.mode === mode) {
+            // Tampilkan popup untuk melanjutkan progress
+            showResumeProgressPopup(mode, savedProgress, inputName);
+            return;
+        }
+
+        // Jika tidak ada progress tersimpan, mulai game baru
+        await startGameFresh(mode, inputName);
+    }
+
+    // ===== SHOW RESUME PROGRESS POPUP =====
+    function showResumeProgressPopup(mode, progress, inputName) {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+        overlay.id = 'resume-progress-overlay';
+
+        const modeName = getModeName(mode);
+
+        overlay.innerHTML = `
+            <div class="confirm-card">
+                <div class="confirm-icon">📋</div>
+                <h2 class="confirm-title">Lanjutkan Progress?</h2>
+                <p class="confirm-message">
+                    Kamu memiliki progress yang belum selesai di mode <strong>${modeName}</strong>.
+                </p>
+                <div class="confirm-progress-info">
+                    📍 Progress: <strong>${progress.scenarioIndex + 1}/${progress.totalQuestions} soal</strong><br>
+                    ⭐ Skor: <strong>${progress.sessionScore} poin</strong><br>
+                    ✅ Benar: <strong>${progress.correctCount} soal</strong>
+                </div>
+                <div class="confirm-actions">
+                    <button class="confirm-btn confirm-btn-secondary" id="btn-new-game">
+                        🆕 Mulai Baru
+                    </button>
+                    <button class="confirm-btn confirm-btn-success" id="btn-resume-game">
+                        ▶️ Lanjutkan
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        document.getElementById('btn-new-game').onclick = async () => {
+            document.body.removeChild(overlay);
+            localStorage.removeItem('lajuaman_game_progress');
+            // Lanjutkan start game baru
+            await startGameFresh(mode, inputName);
+        };
+
+        document.getElementById('btn-resume-game').onclick = async () => {
+            document.body.removeChild(overlay);
+            await resumeGame();
+        };
+    }
+
+    // ===== EXTRACT ORIGINAL START GAME LOGIC =====
+    async function startGameFresh(mode, inputName) {
         // Jika belum register, harus isi nama
         if (!isRegistered) {
             if (!inputName) {
@@ -568,9 +857,6 @@ const app = (function () {
             });
         }
 
-        // Timer hanya untuk tebak rambu
-        // if (state.currentMode === "tebak_rambu") startTimer();
-
         // Re-render icons
         if (typeof lucide !== "undefined") lucide.createIcons();
     }
@@ -680,6 +966,10 @@ const app = (function () {
 
     async function endGame() {
         clearInterval(state.timerInterval);
+
+        // Hapus progress tersimpan karena game sudah selesai
+        localStorage.removeItem('lajuaman_game_progress');
+
         const result = await API.endSession({
             mode: state.currentMode,
             session_score: state.sessionScore,
@@ -830,6 +1120,24 @@ const app = (function () {
         }, 1500);
     };
 
+    // Close popup when clicking outside (optional)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('confirm-overlay')) {
+            const overlay = e.target;
+            if (overlay.id === 'exit-confirm-overlay') {
+                // Jangan tutup popup pertama dengan klik luar
+                return;
+            }
+            if (overlay.id === 'save-progress-overlay' || overlay.id === 'resume-progress-overlay') {
+                overlay.remove();
+                // Kembalikan timer jika perlu
+                if (state.currentMode === 'tebak_rambu' && state.timerInterval === null) {
+                    startTimer();
+                }
+            }
+        }
+    });
+
     return {
         showScreen,
         startGame,
@@ -839,5 +1147,7 @@ const app = (function () {
         showRangkumanUU,
         filterUU,
         toggleFullScreen,
+        checkSavedProgress, // Export untuk debugging
+        resumeGame, // Export untuk debugging
     };
 })();
